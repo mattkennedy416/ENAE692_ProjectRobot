@@ -1,0 +1,1 @@
+%  Computes Cartesian positions of two-link planar armfunction p = fwdkin(q,L)% end of link 2 (tool tip)p(1) = L(1)*cos(q(1))+L(2)*cos(q(1)+q(2)) ;p(2) = L(1)*sin(q(1))+L(2)*sin(q(1)+q(2)) ;% end of link 1 (joint 2)p(3) = L(1)*cos(q(1));p(4) = L(1)*sin(q(1));

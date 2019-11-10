@@ -1,0 +1,472 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     18108,        462]
+NotebookOptionsPosition[     13135,        367]
+NotebookOutlinePosition[     13493,        383]
+CellTagsIndexPosition[     13450,        380]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData["$UserBaseDirectory"], "Input",
+ CellChangeTimes->{{3.782346695599259*^9, 
+  3.7823466956150312`*^9}},ExpressionUUID->"d9a244a5-cd34-45b1-8313-\
+dc1656b36294"],
+
+Cell[BoxData["\<\"/home/matt/.Mathematica\"\>"], "Output",
+ CellChangeTimes->{
+  3.782346696722406*^9},ExpressionUUID->"7c2396b6-938b-41e1-8753-\
+2c229e4b457f"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{"<<", "ToMatlab.m"}]}]], "Input",
+ CellChangeTimes->{{3.7823466925351143`*^9, 
+  3.782346692701645*^9}},ExpressionUUID->"496ef579-e6f2-49ef-8eb9-\
+2528772d145f"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "ToMatlab"}]], "Input",ExpressionUUID->"281893ba-da38-4307-9b05-4c79162b5fa2"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "Information","notfound",
+   "\"Symbol \\!\\(\\*RowBox[{\\\"\\\\\\\"ToMatlab\\\\\\\"\\\"}]\\) not \
+found.\"",2,1,1,23418836673069764899,"Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{
+  3.782346607007313*^9},ExpressionUUID->"77ce12c8-8b8c-479c-94d5-\
+e7a47a52db7d"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "PrintMatlab"}]], "Input",ExpressionUUID->"fba34f97-f33c-4b7a-b985-be505bd4af37"],
+
+Cell[BoxData["\<\"PrintMatlab[expr]  or  PrintMatlab[expr, name]  is like  \
+ToMatlab but instead of returning the String, it is printed on the screen. \
+See also  ToMatlab  and  WriteMatlab.\"\>"], "Print",ExpressionUUID->\
+"0ac26602-87d3-4869-995f-5dd1c5b75250"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "WriteMatlab"}]], "Input",ExpressionUUID->"919b12c0-3c6b-4e25-bdf8-818580458145"],
+
+Cell[BoxData["\<\"WriteMatlab[expr, file]  or  WriteMatlab[expr, file, name] \
+Writes the  expr  in matlab form into the given file. The second form makes \
+this an assignment into the variable  name.\\nExample: f = \
+OpenWrite[\\\"file.m\\\"]; WriteMatlab[Cos[x]-x, f, y]; Close[f];\\nThe file \
+argument can also be a String that gives the name of the file: \
+WriteMatlab[Cos[x]-x, \\\"file.m\\\", y]; achieves the same result as the \
+previous example (but this limits one expression per file).\\nSee also  \
+ToMatlab  and  PrintMatlab.\"\>"], "Print",ExpressionUUID->"a86856e0-2d13-\
+4338-b2a6-259fd0b616e5"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"a", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"x", "+", "y"}], ")"}], "^", "20"}], "//", "Expand"}]}]], "Input",\
+ExpressionUUID->"7c07a3b8-d93b-49ae-9cb1-226e8185b3d8"],
+
+Cell[BoxData[
+ RowBox[{
+  SuperscriptBox["x", "20"], "+", 
+  RowBox[{"20", " ", 
+   SuperscriptBox["x", "19"], " ", "y"}], "+", 
+  RowBox[{"190", " ", 
+   SuperscriptBox["x", "18"], " ", 
+   SuperscriptBox["y", "2"]}], "+", 
+  RowBox[{"1140", " ", 
+   SuperscriptBox["x", "17"], " ", 
+   SuperscriptBox["y", "3"]}], "+", 
+  RowBox[{"4845", " ", 
+   SuperscriptBox["x", "16"], " ", 
+   SuperscriptBox["y", "4"]}], "+", 
+  RowBox[{"15504", " ", 
+   SuperscriptBox["x", "15"], " ", 
+   SuperscriptBox["y", "5"]}], "+", 
+  RowBox[{"38760", " ", 
+   SuperscriptBox["x", "14"], " ", 
+   SuperscriptBox["y", "6"]}], "+", 
+  RowBox[{"77520", " ", 
+   SuperscriptBox["x", "13"], " ", 
+   SuperscriptBox["y", "7"]}], "+", 
+  RowBox[{"125970", " ", 
+   SuperscriptBox["x", "12"], " ", 
+   SuperscriptBox["y", "8"]}], "+", 
+  RowBox[{"167960", " ", 
+   SuperscriptBox["x", "11"], " ", 
+   SuperscriptBox["y", "9"]}], "+", 
+  RowBox[{"184756", " ", 
+   SuperscriptBox["x", "10"], " ", 
+   SuperscriptBox["y", "10"]}], "+", 
+  RowBox[{"167960", " ", 
+   SuperscriptBox["x", "9"], " ", 
+   SuperscriptBox["y", "11"]}], "+", 
+  RowBox[{"125970", " ", 
+   SuperscriptBox["x", "8"], " ", 
+   SuperscriptBox["y", "12"]}], "+", 
+  RowBox[{"77520", " ", 
+   SuperscriptBox["x", "7"], " ", 
+   SuperscriptBox["y", "13"]}], "+", 
+  RowBox[{"38760", " ", 
+   SuperscriptBox["x", "6"], " ", 
+   SuperscriptBox["y", "14"]}], "+", 
+  RowBox[{"15504", " ", 
+   SuperscriptBox["x", "5"], " ", 
+   SuperscriptBox["y", "15"]}], "+", 
+  RowBox[{"4845", " ", 
+   SuperscriptBox["x", "4"], " ", 
+   SuperscriptBox["y", "16"]}], "+", 
+  RowBox[{"1140", " ", 
+   SuperscriptBox["x", "3"], " ", 
+   SuperscriptBox["y", "17"]}], "+", 
+  RowBox[{"190", " ", 
+   SuperscriptBox["x", "2"], " ", 
+   SuperscriptBox["y", "18"]}], "+", 
+  RowBox[{"20", " ", "x", " ", 
+   SuperscriptBox["y", "19"]}], "+", 
+  SuperscriptBox["y", "20"]}]], "Output",ExpressionUUID->"cb5ea787-656d-4e35-\
+8e86-b87a6d5051d6"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["ToMatlab", "Subsection",ExpressionUUID->"ee929053-b993-4bcb-88b3-222dcf0d6ae8"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ToMatlab", "[", "a", "]"}]], "Input",ExpressionUUID->"5c2da0de-6a68-470c-82cd-738ccb8ffecf"],
+
+Cell[BoxData["\<\"x.^20+20.*x.^19.*y+190.*x.^18.*y.^2+1140.*x.^17.*y.^3+4845.*\
+ ...\\n  x.^16.*y.^4+15504.*x.^15.*y.^5+38760.*x.^14.*y.^6+77520.*x.^13.* ...\
+\\n  y.^7+125970.*x.^12.*y.^8+167960.*x.^11.*y.^9+184756.*x.^10.*y.^10+ \
+...\\n  167960.*x.^9.*y.^11+125970.*x.^8.*y.^12+77520.*x.^7.*y.^13+38760.* \
+...\\n  x.^6.*y.^14+15504.*x.^5.*y.^15+4845.*x.^4.*y.^16+1140.*x.^3.* ...\\n  \
+y.^17+190.*x.^2.*y.^18+20.*x.*y.^19+y.^20;\\n\"\>"], "Output",ExpressionUUID->\
+"57ee30b7-47d3-458e-be10-e66eb2f048f4"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ToMatlab", "[", 
+  RowBox[{"a", ",", "\"\<a\>\""}], "]"}]], "Input",ExpressionUUID->"83d08102-\
+0570-4e97-a94b-455ff55e8031"],
+
+Cell[BoxData["\<\"a=x.^20+20.*x.^19.*y+190.*x.^18.*y.^2+1140.*x.^17.*y.^3+\
+4845.* ...\\n  \
+x.^16.*y.^4+15504.*x.^15.*y.^5+38760.*x.^14.*y.^6+77520.*x.^13.* ...\\n  \
+y.^7+125970.*x.^12.*y.^8+167960.*x.^11.*y.^9+184756.*x.^10.*y.^10+ ...\\n  \
+167960.*x.^9.*y.^11+125970.*x.^8.*y.^12+77520.*x.^7.*y.^13+38760.* ...\\n  \
+x.^6.*y.^14+15504.*x.^5.*y.^15+4845.*x.^4.*y.^16+1140.*x.^3.* ...\\n  \
+y.^17+190.*x.^2.*y.^18+20.*x.*y.^19+y.^20;\\n\"\>"], "Output",ExpressionUUID->\
+"82f08b73-ea54-4d4e-8647-5a3a83b71632"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ToMatlab", "[", 
+  RowBox[{"a", ",", "150"}], "]"}]], "Input",ExpressionUUID->"c0fc7b34-dd35-\
+470a-9347-69ee8dcb835a"],
+
+Cell[BoxData["\<\"x.^20+20.*x.^19.*y+190.*x.^18.*y.^2+1140.*x.^17.*y.^3+4845.*\
+x.^16.*y.^4+15504.*x.^15.*y.^5+38760.*x.^14.*y.^6+77520.*x.^13.*y.^7+125970.*\
+x.^12.*y.^8+ ...\\n  \
+167960.*x.^11.*y.^9+184756.*x.^10.*y.^10+167960.*x.^9.*y.^11+125970.*x.^8.*y.^\
+12+77520.*x.^7.*y.^13+38760.*x.^6.*y.^14+15504.*x.^5.*y.^15+4845.*x.^4.* \
+...\\n  y.^16+1140.*x.^3.*y.^17+190.*x.^2.*y.^18+20.*x.*y.^19+y.^20;\\n\"\>"],\
+ "Output",ExpressionUUID->"40b83337-01d1-48ee-92c7-ffcee693ecb9"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ToMatlab", "[", 
+  RowBox[{"a", ",", "\"\<a\>\"", ",", "150"}], "]"}]], "Input",ExpressionUUID-\
+>"1f1b36b5-7412-4ebe-9245-a3c924f008ea"],
+
+Cell[BoxData["\<\"a=x.^20+20.*x.^19.*y+190.*x.^18.*y.^2+1140.*x.^17.*y.^3+\
+4845.*x.^16.*y.^4+15504.*x.^15.*y.^5+38760.*x.^14.*y.^6+77520.*x.^13.*y.^7+\
+125970.*x.^12.*y.^8+ ...\\n  \
+167960.*x.^11.*y.^9+184756.*x.^10.*y.^10+167960.*x.^9.*y.^11+125970.*x.^8.*y.^\
+12+77520.*x.^7.*y.^13+38760.*x.^6.*y.^14+15504.*x.^5.*y.^15+4845.*x.^4.* \
+...\\n  y.^16+1140.*x.^3.*y.^17+190.*x.^2.*y.^18+20.*x.*y.^19+y.^20;\\n\"\>"],\
+ "Output",ExpressionUUID->"59b6c029-eba9-441a-bd9b-018a050ede61"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["PrintMatlab", "Subsection",ExpressionUUID->"d24edccb-6094-4476-a2f9-fe7d0d98f0b3"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PrintMatlab", "[", "a", "]"}]], "Input",ExpressionUUID->"40f85a39-ff69-4dfe-a3b1-949275bfe5b5"],
+
+Cell[BoxData["\<\"x.^20+20.*x.^19.*y+190.*x.^18.*y.^2+1140.*x.^17.*y.^3+4845.*\
+ ...\\n  x.^16.*y.^4+15504.*x.^15.*y.^5+38760.*x.^14.*y.^6+77520.* ...\\n  \
+x.^13.*y.^7+125970.*x.^12.*y.^8+167960.*x.^11.*y.^9+184756.* ...\\n  \
+x.^10.*y.^10+167960.*x.^9.*y.^11+125970.*x.^8.*y.^12+77520.* ...\\n  \
+x.^7.*y.^13+38760.*x.^6.*y.^14+15504.*x.^5.*y.^15+4845.* ...\\n  \
+x.^4.*y.^16+1140.*x.^3.*y.^17+190.*x.^2.*y.^18+20.*x.*y.^19+ ...\\n  \
+y.^20;\\n\"\>"], "Print",ExpressionUUID->"f45254fd-928a-4ad3-b989-\
+9c27b50cd420"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PrintMatlab", "[", 
+  RowBox[{"a", ",", "\"\<a\>\""}], "]"}]], "Input",ExpressionUUID->"237b4c3e-\
+2190-4499-b292-3a431925c110"],
+
+Cell[BoxData["\<\"a=x.^20+20.*x.^19.*y+190.*x.^18.*y.^2+1140.*x.^17.*y.^3+\
+4845.* ...\\n  x.^16.*y.^4+15504.*x.^15.*y.^5+38760.*x.^14.*y.^6+77520.* \
+...\\n  x.^13.*y.^7+125970.*x.^12.*y.^8+167960.*x.^11.*y.^9+184756.* ...\\n  \
+x.^10.*y.^10+167960.*x.^9.*y.^11+125970.*x.^8.*y.^12+77520.* ...\\n  \
+x.^7.*y.^13+38760.*x.^6.*y.^14+15504.*x.^5.*y.^15+4845.* ...\\n  \
+x.^4.*y.^16+1140.*x.^3.*y.^17+190.*x.^2.*y.^18+20.*x.*y.^19+ ...\\n  \
+y.^20;\\n\"\>"], "Print",ExpressionUUID->"122fe0dc-36a7-49ec-bd7d-\
+a8aaf53af21e"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PrintMatlab", "[", 
+  RowBox[{"a", ",", "150"}], "]"}]], "Input",ExpressionUUID->"8705ec8a-345c-\
+4e3e-b319-83d88dc15cc3"],
+
+Cell[BoxData["\<\"x.^20+20.*x.^19.*y+190.*x.^18.*y.^2+1140.*x.^17.*y.^3+4845.*\
+x.^16.*y.^4+15504.*x.^15.*y.^5+38760.*x.^14.*y.^6+77520.*x.^13.*y.^7+125970.*\
+x.^12.*y.^8+ ...\\n  \
+167960.*x.^11.*y.^9+184756.*x.^10.*y.^10+167960.*x.^9.*y.^11+125970.*x.^8.*y.^\
+12+77520.*x.^7.*y.^13+38760.*x.^6.*y.^14+15504.*x.^5.*y.^15+4845.*x.^4.* \
+...\\n  y.^16+1140.*x.^3.*y.^17+190.*x.^2.*y.^18+20.*x.*y.^19+y.^20;\\n\"\>"],\
+ "Print",ExpressionUUID->"2ca05c3a-0f1a-498b-bfcb-63c3540dd35f"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PrintMatlab", "[", 
+  RowBox[{"a", ",", "\"\<a\>\"", ",", "150"}], "]"}]], "Input",ExpressionUUID-\
+>"4529dbb3-bd04-4de7-8534-218a6fa7490d"],
+
+Cell[BoxData["\<\"a=x.^20+20.*x.^19.*y+190.*x.^18.*y.^2+1140.*x.^17.*y.^3+\
+4845.*x.^16.*y.^4+15504.*x.^15.*y.^5+38760.*x.^14.*y.^6+77520.*x.^13.*y.^7+\
+125970.*x.^12.*y.^8+ ...\\n  \
+167960.*x.^11.*y.^9+184756.*x.^10.*y.^10+167960.*x.^9.*y.^11+125970.*x.^8.*y.^\
+12+77520.*x.^7.*y.^13+38760.*x.^6.*y.^14+15504.*x.^5.*y.^15+4845.*x.^4.* \
+...\\n  y.^16+1140.*x.^3.*y.^17+190.*x.^2.*y.^18+20.*x.*y.^19+y.^20;\\n\"\>"],\
+ "Print",ExpressionUUID->"40f971e9-3c02-4e75-a270-ebb31b591710"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["WriteMatlab", "Subsection",ExpressionUUID->"948beeb0-8bb1-46e7-8ca9-9b3b4b134400"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Directory", "[", "]"}]], "Input",ExpressionUUID->"f9a2512e-1549-45dd-afc5-faa4819bd3ed"],
+
+Cell[BoxData["\<\"C:\\\\\"\>"], "Output",ExpressionUUID->"6f3c5d1c-13c9-4d6f-b13f-155062226606"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"f", "=", 
+  RowBox[{"OpenWrite", "[", "\"\<tomatlab-test1.m\>\"", "]"}]}]], "Input",Expr\
+essionUUID->"90a76bef-3f24-42fb-869e-5794e96cbc86"],
+
+Cell[BoxData[
+ RowBox[{"OutputStream", "[", 
+  RowBox[{"\<\"tomatlab-test1.m\"\>", ",", "4"}], "]"}]], "Output",ExpressionU\
+UID->"69639d4f-f790-45ac-9e2b-e618b63c7e58"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"WriteMatlab", "[", 
+  RowBox[{"a", ",", "f"}], "]"}]], "Input",ExpressionUUID->"cba1a0ab-9d47-\
+4c37-9ea0-d9ce4e9a97e3"],
+
+Cell[BoxData[
+ RowBox[{"WriteMatlab", "[", 
+  RowBox[{"a", ",", "f", ",", "\"\<a\>\""}], "]"}]], "Input",ExpressionUUID->\
+"186f5ac2-1941-4875-bf95-0efa35836eb6"],
+
+Cell[BoxData[
+ RowBox[{"WriteMatlab", "[", 
+  RowBox[{"a", ",", "f", ",", "120"}], "]"}]], "Input",ExpressionUUID->\
+"fc7fd6a9-1569-45d4-ac29-62b39c5283ed"],
+
+Cell[BoxData[
+ RowBox[{"WriteMatlab", "[", 
+  RowBox[{"a", ",", "f", ",", "\"\<a\>\"", ",", "120"}], "]"}]], "Input",Expre\
+ssionUUID->"97a154e0-184e-4b31-8983-d220c266207e"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Close", "[", "f", "]"}]], "Input",ExpressionUUID->"0960906f-06d5-475d-94e4-eca059d492f7"],
+
+Cell[BoxData["\<\"tomatlab-test1.m\"\>"], "Output",ExpressionUUID->"acbb7ca9-a541-48b9-8864-4f87ea5ef4ae"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"WriteMatlab", "[", 
+  RowBox[{"a", ",", "\"\<tomatlab-test2.m\>\""}], "]"}]], "Input",ExpressionUU\
+ID->"6b152137-f1dc-4a20-acd8-2f87a1618692"],
+
+Cell[BoxData[
+ RowBox[{"WriteMatlab", "[", 
+  RowBox[{"a", ",", "\"\<tomatlab-test3.m\>\"", ",", "\"\<a\>\""}], 
+  "]"}]], "Input",ExpressionUUID->"a7087134-897b-46b0-9138-695ecfbea55a"],
+
+Cell[BoxData[
+ RowBox[{"WriteMatlab", "[", 
+  RowBox[{"a", ",", "\"\<tomatlab-test4.m\>\"", ",", "120"}], "]"}]], "Input",\
+ExpressionUUID->"e2aa7037-bf9b-42d7-88e5-6b1ab5775562"],
+
+Cell[BoxData[
+ RowBox[{"WriteMatlab", "[", 
+  RowBox[{
+  "a", ",", "\"\<tomatlab-test5.m\>\"", ",", "\"\<a\>\"", ",", "120"}], 
+  "]"}]], "Input",ExpressionUUID->"391cbe6a-0790-4987-98ad-43e00a91b18d"]
+}, Open  ]]
+},
+WindowSize->{831, 912},
+WindowMargins->{{111, Automatic}, {Automatic, 47}},
+Magnification->1,
+FrontEndVersion->"11.2 for Linux x86 (64-bit) (September 10, 2017)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 172, 3, 31, "Input",ExpressionUUID->"d9a244a5-cd34-45b1-8313-dc1656b36294"],
+Cell[755, 27, 160, 3, 35, "Output",ExpressionUUID->"7c2396b6-938b-41e1-8753-2c229e4b457f"]
+}, Open  ]],
+Cell[930, 33, 241, 5, 111, "Input",ExpressionUUID->"496ef579-e6f2-49ef-8eb9-2528772d145f"],
+Cell[CellGroupData[{
+Cell[1196, 42, 106, 1, 31, "Input",ExpressionUUID->"281893ba-da38-4307-9b05-4c79162b5fa2"],
+Cell[1305, 45, 320, 8, 22, "Message",ExpressionUUID->"77ce12c8-8b8c-479c-94d5-e7a47a52db7d"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1662, 58, 109, 1, 31, "Input",ExpressionUUID->"fba34f97-f33c-4b7a-b985-be505bd4af37"],
+Cell[1774, 61, 264, 3, 48, "Print",ExpressionUUID->"0ac26602-87d3-4869-995f-5dd1c5b75250"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2075, 69, 109, 1, 31, "Input",ExpressionUUID->"919b12c0-3c6b-4e25-bdf8-818580458145"],
+Cell[2187, 72, 612, 8, 180, "Print",ExpressionUUID->"a86856e0-2d13-4338-b2a6-259fd0b616e5"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2836, 85, 211, 6, 31, "Input",ExpressionUUID->"7c07a3b8-d93b-49ae-9cb1-226e8185b3d8"],
+Cell[3050, 93, 1961, 59, 86, "Output",ExpressionUUID->"cb5ea787-656d-4e35-8e86-b87a6d5051d6"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5048, 157, 85, 0, 55, "Subsection",ExpressionUUID->"ee929053-b993-4bcb-88b3-222dcf0d6ae8"],
+Cell[CellGroupData[{
+Cell[5158, 161, 116, 1, 31, "Input",ExpressionUUID->"5c2da0de-6a68-470c-82cd-738ccb8ffecf"],
+Cell[5277, 164, 509, 6, 174, "Output",ExpressionUUID->"57ee30b7-47d3-458e-be10-e66eb2f048f4"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5823, 175, 149, 3, 31, "Input",ExpressionUUID->"83d08102-0570-4e97-a94b-455ff55e8031"],
+Cell[5975, 180, 513, 7, 174, "Output",ExpressionUUID->"82f08b73-ea54-4d4e-8647-5a3a83b71632"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6525, 192, 143, 3, 31, "Input",ExpressionUUID->"c0fc7b34-dd35-470a-9347-69ee8dcb835a"],
+Cell[6671, 197, 482, 6, 174, "Output",ExpressionUUID->"40b83337-01d1-48ee-92c7-ffcee693ecb9"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[7190, 208, 161, 3, 31, "Input",ExpressionUUID->"1f1b36b5-7412-4ebe-9245-a3c924f008ea"],
+Cell[7354, 213, 484, 6, 162, "Output",ExpressionUUID->"59b6c029-eba9-441a-bd9b-018a050ede61"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[7887, 225, 88, 0, 47, "Subsection",ExpressionUUID->"d24edccb-6094-4476-a2f9-fe7d0d98f0b3"],
+Cell[CellGroupData[{
+Cell[8000, 229, 119, 1, 30, "Input",ExpressionUUID->"40f85a39-ff69-4dfe-a3b1-949275bfe5b5"],
+Cell[8122, 232, 519, 7, 158, "Print",ExpressionUUID->"f45254fd-928a-4ad3-b989-9c27b50cd420"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[8678, 244, 152, 3, 30, "Input",ExpressionUUID->"237b4c3e-2190-4499-b292-3a431925c110"],
+Cell[8833, 249, 521, 7, 158, "Print",ExpressionUUID->"122fe0dc-36a7-49ec-bd7d-a8aaf53af21e"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9391, 261, 146, 3, 30, "Input",ExpressionUUID->"8705ec8a-345c-4e3e-b319-83d88dc15cc3"],
+Cell[9540, 266, 481, 6, 158, "Print",ExpressionUUID->"2ca05c3a-0f1a-498b-bfcb-63c3540dd35f"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10058, 277, 164, 3, 30, "Input",ExpressionUUID->"4529dbb3-bd04-4de7-8534-218a6fa7490d"],
+Cell[10225, 282, 483, 6, 158, "Print",ExpressionUUID->"40f971e9-3c02-4e75-a270-ebb31b591710"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10757, 294, 88, 0, 47, "Subsection",ExpressionUUID->"948beeb0-8bb1-46e7-8ca9-9b3b4b134400"],
+Cell[CellGroupData[{
+Cell[10870, 298, 112, 1, 30, "Input",ExpressionUUID->"f9a2512e-1549-45dd-afc5-faa4819bd3ed"],
+Cell[10985, 301, 96, 0, 29, "Output",ExpressionUUID->"6f3c5d1c-13c9-4d6f-b13f-155062226606"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11118, 306, 165, 3, 30, "Input",ExpressionUUID->"90a76bef-3f24-42fb-869e-5794e96cbc86"],
+Cell[11286, 311, 169, 3, 29, "Output",ExpressionUUID->"69639d4f-f790-45ac-9e2b-e618b63c7e58"]
+}, Open  ]],
+Cell[11470, 317, 144, 3, 30, "Input",ExpressionUUID->"cba1a0ab-9d47-4c37-9ea0-d9ce4e9a97e3"],
+Cell[11617, 322, 162, 3, 30, "Input",ExpressionUUID->"186f5ac2-1941-4875-bf95-0efa35836eb6"],
+Cell[11782, 327, 156, 3, 30, "Input",ExpressionUUID->"fc7fd6a9-1569-45d4-ac29-62b39c5283ed"],
+Cell[11941, 332, 174, 3, 30, "Input",ExpressionUUID->"97a154e0-184e-4b31-8983-d220c266207e"],
+Cell[CellGroupData[{
+Cell[12140, 339, 113, 1, 30, "Input",ExpressionUUID->"0960906f-06d5-475d-94e4-eca059d492f7"],
+Cell[12256, 342, 106, 0, 29, "Output",ExpressionUUID->"acbb7ca9-a541-48b9-8864-4f87ea5ef4ae"]
+}, Open  ]],
+Cell[12377, 345, 167, 3, 30, "Input",ExpressionUUID->"6b152137-f1dc-4a20-acd8-2f87a1618692"],
+Cell[12547, 350, 186, 3, 30, "Input",ExpressionUUID->"a7087134-897b-46b0-9138-695ecfbea55a"],
+Cell[12736, 355, 179, 3, 30, "Input",ExpressionUUID->"e2aa7037-bf9b-42d7-88e5-6b1ab5775562"],
+Cell[12918, 360, 201, 4, 30, "Input",ExpressionUUID->"391cbe6a-0790-4987-98ad-43e00a91b18d"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+

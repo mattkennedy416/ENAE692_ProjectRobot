@@ -1,0 +1,1 @@
+%  DESIRED TRAJECTORY FUNCTIONfunction [q_des,qd_des,qdd_des] = trajectory(t)T = 2 ;omega = 2*pi/T ;g1 = 0.1 ;g2 = 0.1 ;q_des(1) = g1*sin(omega*t) ;q_des(2) = g2*cos(omega*t) ;qd_des(1) = g1*omega*cos(omega*t) ;qd_des(2) = -g2*omega*sin(omega*t) ;qdd_des(1) = -g1*omega*omega*sin(omega*t) ;qdd_des(2) = -g2*omega*omega*cos(omega*t) ;

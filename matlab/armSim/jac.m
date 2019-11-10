@@ -1,0 +1,1 @@
+function jac = jac2(q,L)%	NOTE: ALL ANGLES ARE IN RADIANS%	pre-compute the trig termsc1 = cos(q(1));s1 = sin(q(1));c12 = cos(q(1)+q(2));s12 = sin(q(1)+q(2));jac = [ -L(1)*s1-L(2)*s12 -L(2)*s12 ; L(1)*c1+L(2)*c12  L(2)*c12 ];
