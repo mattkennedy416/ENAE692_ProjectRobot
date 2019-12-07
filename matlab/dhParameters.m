@@ -4,6 +4,7 @@ function DH = dhParameters(state)
 
 % fixed parameters
 a2 = state.a2;
+a5 = state.a5;
 d6 = state.d6;
 
 % variable parameters
@@ -18,7 +19,7 @@ theta7 = state.theta7;
 
 
 alpha_i1 = [0; 0; pi/2; pi/2; -pi/2; pi/2; pi/2];
-a_i1 = [0; 0; a2; 0; 0; 0; 0];
+a_i1 = [0; 0; a2; 0; 0; a5; 0];
 d_i = [d1; 0; 0; d4; 0; d6; 0];
 theta_i = [0; theta2; theta3; 0; theta5; theta6; theta7];
 

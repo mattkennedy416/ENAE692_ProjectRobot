@@ -12,10 +12,11 @@ clear
 %% set up state
 % fixed joints
 state.a2 = 0; % joint width, meters
-state.d6 = 0; % wrist length, meters
 state.a3 = 10;
 state.a4 = 10;
-state.a5 = 20;
+
+state.d6 = 20; % wrist length, meters
+state.a5 = 0; % wrist length? 
 
 % variable joints
 state.d1 = 50;
@@ -32,13 +33,13 @@ state.ship_pitch = 0;
 state.ship_roll = 0;
 state.arm_x = 1;
 state.arm_y = 3;
-jointRateLimits = [0.25; 0.1; 0.1; 0.25; 0.1; 0.1; 0.1];
+jointRateLimits = [1; 0.1; 0.1; 1; 0.1; 0.1; 0.1];
 
 
 state = dhParameters(state);
 
 global pT
-pT = [-50; 0; -12]; % point tool tip relative to origin 7
+pT = [0; 50; -12]; % point tool tip relative to origin 7
 
 [J, J_tran] = Jacobian(state,pT);
 
@@ -52,13 +53,47 @@ dt = 0.5;
 
 % PGoalBase = [1.5; 1; 2.75];
 % PGoal = PGoalBase;
-PGoal = [50; -75; 75];
+% PGoal = [50; -50; 75];
+
+
+% need to define the position, pitch, and yaw of target
+% where positive x is out of ship, -y is towards back of ship
+targetPosition = [75; 45; 65;];
+targetYaw = -0.123; % =theta7, =0 parallel to ship, where increasing theta7 points us toward ship and negative away
+targetPitch = -0.123; % = theta6, =0 parallel to ship, where increasing theta6 points the catcher upward, and decreasing points downward
+
+
+% so we want the tool tip to be at target position, with theta6 and theta7
+% defined
+% and we have pT which is the tip relative to origin 7, so
+% p7 = targetPosition - pT;
+
+% and then we need the position at 5? so transformation matrix from 7 to 5
+T56 = Transform( state.theta_i(5), state.alpha_i1(5), state.a_i1(5), state.d_i(5) );
+T67 = Transform( targetPitch, state.alpha_i1(6), state.a_i1(6), state.d_i(6) );
+T78 = Transform( targetYaw, pi/2, pT(2), pT(3) );
+T58 = T56 * T67 * T78;
+
+
+
+t_targetPosition = targetPosition;
+t_targetPosition(4) = 0;
+
+P5T = [T58(3,4); T58(1,4); -T58(2,4)]; % don't mess with this, it works
+
+PGoal = targetPosition - P5T(1:3);
+targetOrigin = 5;
 
 for steps = 1:50
     
     %PGoal = PGoal + 4*[(rand(1)-0.5); (rand(1)-0.5); (rand(1)-0.5)];
     
-    stateGoal = iterativeJacobian(state, PGoal);
+    stateGoal = iterativeJacobian(state, PGoal, targetOrigin);
+    stateGoal.theta_i(5) = pi/2 - stateGoal.theta_i(3);
+    stateGoal.theta_i(6) = targetPitch;
+    stateGoal.theta_i(7) = targetYaw - stateGoal.theta_i(2);
+    
+    
     state = takeStep(state, stateGoal, jointRateLimits, dt);
     
     newJointPositions = forwardKinematics(state, pT, true);
@@ -77,10 +112,10 @@ for steps = 1:50
     theta7(steps,1) = state.theta_i(7);   
     
     
-    plot3(initialJointPositions(1,:), initialJointPositions(2,:), initialJointPositions(3,:));
+    plot3(initialJointPositions(1,:), -initialJointPositions(2,:), initialJointPositions(3,:));
     hold on
-    plot3(newJointPositions(1,:), newJointPositions(2,:), newJointPositions(3,:), 'r');
-    plot3(PGoal(1),PGoal(2),PGoal(3), 'r*')
+    plot3(newJointPositions(1,:), -newJointPositions(2,:), newJointPositions(3,:), 'r');
+    plot3(PGoal(1),-PGoal(2),PGoal(3), 'r*')
     xlabel('x')
     ylabel('y')
     axis('equal')
@@ -104,8 +139,20 @@ qNew = zeros(size(q));
 
 qDeltaTotal = qGoal - q;
 qDeltaAllowable = jointRateLimits * dt;
+stepsAtMaxRate = ceil(abs(qDeltaTotal ./ qDeltaAllowable));
 
-for n = 1:length(qDeltaTotal)
+% for the wrist at least, lets get all the joints to move at a rate such
+% that they'll all finish at the same time
+% and actually lets include joint 3 in there as well since it's tied to 5
+% wristSteps = max(stepsAtMaxRate([3,5,6,7]));
+% 
+% for n = [3,5,6,7]
+%    qNew(n) = q(n) +  qDeltaTotal(n)/wristSteps;
+% end
+% this actually looks even worse... meh
+
+% and then leave the rest of the joints as-is?
+for n = 1:7
    
     if abs(qDeltaTotal(n)) <= qDeltaAllowable(n)
         qNew(n) = qGoal(n); % are allowed to move this much this time step
@@ -122,7 +169,7 @@ end
 
 
 
-function [newState] = iterativeJacobian(state, PGoal)
+function [newState] = iterativeJacobian(state, PGoal, targetOrigin)
 
 global pT
 
@@ -149,25 +196,27 @@ q = q_initial;
 
 state_temp = state;
 
-for iter = 1:4
+for iter = 1:10
     q_initial = q;
     
     jointPositions = forwardKinematics(state_temp, pT);
-    x_initial = jointPositions(:,8);
+    x_initial = jointPositions(:,targetOrigin);
     
     fprintf("LOOP %i =>  theta = (%f,%f,%f)\t\t p = (%f,%f,%f)\n", iter, q(1),q(2),q(3),x_initial(1),x_initial(2),x_initial(3));
     deltaX = PGoal - x_initial;
     
     % if DOF > 6 then use the pseudoinverse Jacobian!
-    [~, J_tran] = Jacobian(state_temp, pT);
+%     [~, J_tran] = Jacobian(state_temp, pT);
+    J_tran = J15_translation(state_temp);
     Jpi = pseudoInverseJacobian(J_tran);
     
 %     deltaQ = J_tran\deltaX; % equiv to inv(J)*deltaX
     deltaQ = Jpi * deltaX;
+    deltaQ(6:7) = [0;0];
     q = q_initial + deltaQ;
     
-    q(5) = pi/2 - q(3);
-    q(6) = 0; % this is the angle of the tip, want it to remain horizontal?
+%     q(5) = pi/2 - q(3);
+%     q(6) = 0; % this is the angle of the tip, want it to remain horizontal?
     
     state_temp = q2state(q, state_temp); % update the state
 end
@@ -199,12 +248,12 @@ jointPositions = zeros(3,size(dh,1));
 T_total = eye(4);
 for link = 1:size(dh,1)
    T_total = T_total * Transform( dh.theta_i(link), dh.alpha_i1(link), dh.a_i1(link), dh.d_i(link) );
-   jointPositions(:,link) = transpose(T_total(1:3,4));
+   jointPositions(:,link) = T_total(1:3,4);
 end
 
 % and then to get the tool tip at the end
 % pT(3) becomes the d and pT(1) becomes the a? 
-T_total = T_total * Transform( 0, 0, pT(3), pT(1) );
+T_total = T_total * Transform( 0, 0, pT(3), pT(2) );
 jointPositions(:,link+1) = transpose(T_total(1:3,4));
 
 if nargin == 3
