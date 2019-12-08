@@ -121,6 +121,7 @@ PGoal = [PGoal1, PGoal2, PGoal3, PGoalFinal];
 goal = 1;
 goalError = 1;
 
+iterativeJacobianConvergenceError = 1E-3;
 
 targetOrigin = 5;
 
@@ -128,7 +129,15 @@ for steps = 1:size(droneState,1)
     
     %PGoal = PGoal + 4*[(rand(1)-0.5); (rand(1)-0.5); (rand(1)-0.5)];
     
-    stateGoal = iterativeJacobian(state, PGoal(:,goal), targetOrigin);
+    [stateGoal, iterativeJacobianError] = iterativeJacobian(state, PGoal(:,goal), targetOrigin);
+    
+    IJ_distanceFromGoal(steps) = iterativeJacobianError(1);
+    convergedLocs = find(iterativeJacobianError < iterativeJacobianConvergenceError);
+    if length(convergedLocs) > 0
+        IJ_convergedSteps(steps) = convergedLocs(1);
+    end
+    
+    
     stateGoal.theta_i(5) = pi/2 - stateGoal.theta_i(3);
     stateGoal.theta_i(6) = targetPitch;
     stateGoal.theta_i(7) = targetYaw - stateGoal.theta_i(2);
@@ -155,7 +164,7 @@ for steps = 1:size(droneState,1)
     theta6(steps,1) = state.theta_i(6);
     theta7(steps,1) = state.theta_i(7);   
     
-    
+    figure(1)
     plot3(initialJointPositions(1,:), -initialJointPositions(2,:), initialJointPositions(3,:));
     hold on
     plot3(newJointPositions(1,:), -newJointPositions(2,:), newJointPositions(3,:), 'r');
@@ -163,10 +172,19 @@ for steps = 1:size(droneState,1)
     xlabel('x')
     ylabel('y')
     axis('equal')
+    
+    figure(2)
+    plot(iterativeJacobianError)
+    hold on
 
 end
 
+figure(1)
 plot3(droneState.x-robotBasePosition(1), droneState.y-robotBasePosition(2), droneState.z-robotBasePosition(3))
+
+
+
+
 
 catcher = catcherState;
 
@@ -211,12 +229,17 @@ for steps = 1:100
     
     %PGoal = PGoal + 4*[(rand(1)-0.5); (rand(1)-0.5); (rand(1)-0.5)];
     
-    stateGoal = iterativeJacobian(state, PGoal(:,goal), targetOrigin);
+    [stateGoal, iterativeJacobianError] = iterativeJacobian(state, PGoal(:,goal), targetOrigin);
     stateGoal.theta_i(5) = pi/2 - stateGoal.theta_i(3);
     stateGoal.theta_i(6) = targetPitch;
 %     stateGoal.theta_i(7) = targetYaw - stateGoal.theta_i(2);
     stateGoal.theta_i(7) = 0;
     
+    IJ_distanceFromGoal_Catch(steps) = iterativeJacobianError(1);
+    convergedLocs_Catch = find(iterativeJacobianError < iterativeJacobianConvergenceError);
+    if length(convergedLocs_Catch) > 0
+        IJ_convergedSteps_Catch(steps) = convergedLocs_Catch(1);
+    end
     
     state = takeStep(state, stateGoal, jointRateLimits, dt);
     
@@ -250,7 +273,7 @@ for steps = 1:100
     theta7(steps,1) = state.theta_i(7); 
 %     theta7(steps,1) = targetYaw - theta2(steps,1); % lets actually enforce this so the drone doesn't get out of sync
      
-    
+    figure(1)
     plot3(initialJointPositions(1,:), -initialJointPositions(2,:), initialJointPositions(3,:));
     hold on
     plot3(newJointPositions(1,:), -newJointPositions(2,:), newJointPositions(3,:), 'r');
@@ -258,8 +281,24 @@ for steps = 1:100
     xlabel('x')
     ylabel('y')
     axis('equal')
+    
+    figure(2)
+    plot(iterativeJacobianError)
 
 end
+
+figure(2)
+xlabel('Iterative Jacobian Steps')
+ylabel('|\delta q| from Goal')
+title('Iterative Jacobian Convergence')
+
+figure(3)
+plot([IJ_distanceFromGoal, IJ_distanceFromGoal_Catch], [IJ_convergedSteps, IJ_convergedSteps_Catch], '*')
+xlabel('|\delta q| from Goal')
+ylabel('Iterative Jacobian Steps to Converge')
+title('Iterative Jacobian Convergence')
+ylim([0, 8])
+
 
 catcher = catcher(end) * ones(length(time),1);
 
@@ -320,7 +359,7 @@ end
 
 
 
-function [newState] = iterativeJacobian(state, PGoal, targetOrigin)
+function [newState, error] = iterativeJacobian(state, PGoal, targetOrigin)
 
 global pT
 
@@ -347,7 +386,7 @@ q = q_initial;
 
 state_temp = state;
 
-for iter = 1:5
+for iter = 1:10
     q_initial = q;
     
     jointPositions = forwardKinematics(state_temp, pT);
@@ -368,7 +407,7 @@ for iter = 1:5
     
 %     q(5) = pi/2 - q(3);
 %     q(6) = 0; % this is the angle of the tip, want it to remain horizontal?
-    
+    error(iter) = norm(deltaQ);
     state_temp = q2state(q, state_temp); % update the state
 end
 
