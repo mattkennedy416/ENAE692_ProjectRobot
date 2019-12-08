@@ -9,6 +9,13 @@
 
 clear
 
+
+
+
+
+
+
+
 %% set up state
 % fixed joints
 state.a2 = 0; % joint width, meters
@@ -50,19 +57,28 @@ initialJointPositions = forwardKinematics(state, pT, true);
 
 
 dt = 0.5;
-
-% PGoalBase = [1.5; 1; 2.75];
-% PGoal = PGoalBase;
-% PGoal = [50; -50; 75];
+robotBasePosition = [360; -450; -50];
 
 
 % need to define the position, pitch, and yaw of target
 % where positive x is out of ship, -y is towards back of ship
 targetPosition = [75; 45; 65;];
-targetYaw = -0.123; % =theta7, =0 parallel to ship, where increasing theta7 points us toward ship and negative away
-targetPitch = -0.123; % = theta6, =0 parallel to ship, where increasing theta6 points the catcher upward, and decreasing points downward
+
+droneState = calculateDroneDynamics(targetPosition, robotBasePosition, dt);
+[droneState, catcherState] = calculateCatcherDynamics(droneState, dt);
+
+% targetYaw = droneState.drone_yaw(end); % =theta7, =0 parallel to ship, where increasing theta7 points us toward ship and negative away
+% targetPitch = droneState.drone_pitch(end); % = theta6, =0 parallel to ship, where increasing theta6 points the catcher upward, and decreasing points downward
+targetYaw = 0;
+targetPitch = 0;
 
 
+
+
+
+
+
+%% CATCH THE DRONE!
 % so we want the tool tip to be at target position, with theta6 and theta7
 % defined
 % and we have pT which is the tip relative to origin 7, so
@@ -75,16 +91,17 @@ T78 = Transform( targetYaw, pi/2, pT(2), pT(3) );
 T58 = T56 * T67 * T78;
 
 
-
 t_targetPosition = targetPosition;
 t_targetPosition(4) = 0;
 
 P5T = [T58(3,4); T58(1,4); -T58(2,4)]; % don't mess with this, it works
 
+P5T_noRotation = initialJointPositions(:,9) - initialJointPositions(:,6);
+
 PGoal = targetPosition - P5T(1:3);
 targetOrigin = 5;
 
-for steps = 1:50
+for steps = 1:size(droneState,1)
     
     %PGoal = PGoal + 4*[(rand(1)-0.5); (rand(1)-0.5); (rand(1)-0.5)];
     
@@ -122,10 +139,102 @@ for steps = 1:50
 
 end
 
+plot3(droneState.x-robotBasePosition(1), droneState.y-robotBasePosition(2), droneState.z-robotBasePosition(3))
 
-T = table(time, d1, theta2, theta3, d4, theta5, theta6, theta7);
+catcher = catcherState;
 
-makeRoboWorksAnimation(T, 'animationTest1');
+armState = table(time, d1, theta2, theta3, d4, theta5, theta6, theta7, catcher);
+combinedCatch = join(armState, droneState);
+
+
+%% RETURN IT TO DECK!
+deckTarget = [0; 50; 25]; % this can be P5
+PGoal1 = [25; 50; 65];
+PGoal2 = [0; 50; 40];
+PGoal = [PGoal1, PGoal2];
+goal = 1;
+goalError = 1;
+
+
+targetOrigin = 5;
+
+clear time d1 theta2 theta3 d4 theta5 theta6 theta7
+
+droneX = droneState.x(end);
+droneY = droneState.y(end);
+droneZ = droneState.z(end);
+droneRelPos0 = [droneX; droneY; droneZ] - robotBasePosition;
+droneRelPos7 = droneRelPos0 - newJointPositions(:,8);
+pitch0 = droneState.drone_pitch(end);
+roll0 = droneState.drone_roll(end);
+
+targetYaw = pi/2;
+
+t0 = combinedCatch.time(end);
+for steps = 1:75
+    
+    %PGoal = PGoal + 4*[(rand(1)-0.5); (rand(1)-0.5); (rand(1)-0.5)];
+    
+    stateGoal = iterativeJacobian(state, PGoal(:,goal), targetOrigin);
+    stateGoal.theta_i(5) = pi/2 - stateGoal.theta_i(3);
+    stateGoal.theta_i(6) = targetPitch;
+    stateGoal.theta_i(7) = targetYaw - stateGoal.theta_i(2);
+    
+    
+    state = takeStep(state, stateGoal, jointRateLimits, dt);
+    
+    newJointPositions = forwardKinematics(state, pT, true);
+    
+    if norm(newJointPositions(:,targetOrigin) - PGoal(:,goal)) < goalError
+        if size(PGoal,2) > goal
+            goal = goal + 1;
+        else
+            break
+        end
+    end
+      
+    
+    
+    x(steps,1) = newJointPositions(1,8) + droneRelPos7(1) + robotBasePosition(1);
+    y(steps,1) = newJointPositions(2,8) + droneRelPos7(2) + robotBasePosition(2);
+    z(steps,1) = newJointPositions(3,8) + droneRelPos7(3) + robotBasePosition(3);
+    drone_yaw(steps,1) = state.theta_i(2) + state.theta_i(7); % does this need to counter-act 2 and 7?
+    drone_pitch(steps,1) = pitch0*(1 - drone_yaw(steps,1)/targetYaw); % approx
+    drone_roll(steps,1) = pitch0*drone_yaw(steps,1)/targetYaw;
+    
+    % pull out the parameters that we want
+    time(steps,1) = t0 + dt*(steps-1); % need time!
+    d1(steps,1) = state.d_i(1);
+    theta2(steps,1) = state.theta_i(2);
+    theta3(steps,1) = state.theta_i(3);
+    d4(steps,1) = state.d_i(4);
+    theta5(steps,1) = state.theta_i(5);
+    theta6(steps,1) = state.theta_i(6);
+    theta7(steps,1) = state.theta_i(7);   
+    
+    
+    plot3(initialJointPositions(1,:), -initialJointPositions(2,:), initialJointPositions(3,:));
+    hold on
+    plot3(newJointPositions(1,:), -newJointPositions(2,:), newJointPositions(3,:), 'r');
+    plot3(PGoal(1),-PGoal(2),PGoal(3), 'r*')
+    xlabel('x')
+    ylabel('y')
+    axis('equal')
+
+end
+
+catcher = catcher(end) * ones(length(time),1);
+
+armStateReturn = table(time, d1, theta2, theta3, d4, theta5, theta6, theta7, catcher);
+droneStateReturn = table(time, x,y,z,drone_pitch, drone_roll, drone_yaw);
+
+combinedReturn = join(armStateReturn, droneStateReturn);
+
+
+
+
+combinedState = [combinedCatch; combinedReturn];
+makeRoboWorksAnimation(combinedState, 'animationTest2');
 
 
 
@@ -196,7 +305,7 @@ q = q_initial;
 
 state_temp = state;
 
-for iter = 1:10
+for iter = 1:5
     q_initial = q;
     
     jointPositions = forwardKinematics(state_temp, pT);
