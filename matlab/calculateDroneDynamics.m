@@ -4,13 +4,13 @@ function droneState = calculateDroneDynamics(targetPosition, robotBasePosition, 
 
 % for now, just make the drone come straight in with no turns
 
-droneHookPosition = [0; -5; 10]; % relative position of the hook on the drone (that needs to hit the target)
+droneHookPosition = [0; 5; 10]; % relative position of the hook on the drone (that needs to hit the target)
 
 targetPosition(2) = -targetPosition(2); % since the y axis is flipped
 absTargetPosition = robotBasePosition + targetPosition - droneHookPosition; % target in abs coordinates
 
 velMag = 10;
-droneRelInitialPosition = [0; -300; 50];
+droneRelInitialPosition = [0; -500; 50];
 velocity = -velMag * droneRelInitialPosition/norm(droneRelInitialPosition);
 
 

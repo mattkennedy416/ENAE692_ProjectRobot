@@ -25,14 +25,26 @@ state.a4 = 10;
 state.d6 = 20; % wrist length, meters
 state.a5 = 0; % wrist length? 
 
-% variable joints
+% % % variable joints - default state hanging out over ship
+% state.d1 = 50;
+% state.theta2 = 0;
+% state.theta3 = pi/2;
+% state.d4 = 50;
+% state.theta5 = 0;
+% state.theta6 = 0;
+% state.theta7 = 0;
+
+% stowed state:
 state.d1 = 50;
-state.theta2 = 0;
-state.theta3 = pi/2;
+state.theta2 = deg2rad(110);
+state.theta3 = deg2rad(90);
 state.d4 = 50;
-state.theta5 = 0;
+state.theta5 = pi/2 - state.theta3;
 state.theta6 = 0;
-state.theta7 = 0;
+state.theta7 = -state.theta2;
+
+
+
 
 % ship joints
 state.ship_yaw = 0;
@@ -98,14 +110,25 @@ P5T = [T58(3,4); T58(1,4); -T58(2,4)]; % don't mess with this, it works
 
 P5T_noRotation = initialJointPositions(:,9) - initialJointPositions(:,6);
 
-PGoal = targetPosition - P5T(1:3);
+% from stowed state we probably need some intermediate points to make sure
+% we converge properly
+PGoal1 = [0; 50; 60];
+PGoal2 = [25; 35; 65];
+PGoal3 = [35; 25; 65];
+PGoalFinal = targetPosition - P5T(1:3);
+
+PGoal = [PGoal1, PGoal2, PGoal3, PGoalFinal];
+goal = 1;
+goalError = 1;
+
+
 targetOrigin = 5;
 
 for steps = 1:size(droneState,1)
     
     %PGoal = PGoal + 4*[(rand(1)-0.5); (rand(1)-0.5); (rand(1)-0.5)];
     
-    stateGoal = iterativeJacobian(state, PGoal, targetOrigin);
+    stateGoal = iterativeJacobian(state, PGoal(:,goal), targetOrigin);
     stateGoal.theta_i(5) = pi/2 - stateGoal.theta_i(3);
     stateGoal.theta_i(6) = targetPitch;
     stateGoal.theta_i(7) = targetYaw - stateGoal.theta_i(2);
@@ -115,7 +138,11 @@ for steps = 1:size(droneState,1)
     
     newJointPositions = forwardKinematics(state, pT, true);
     
-    tipPoints(steps,1:3) = newJointPositions(:,end);
+    if norm(newJointPositions(:,targetOrigin) - PGoal(:,goal)) < goalError
+        if size(PGoal,2) > goal
+            goal = goal + 1;
+        end
+    end
     
     
     % pull out the parameters that we want
@@ -132,7 +159,7 @@ for steps = 1:size(droneState,1)
     plot3(initialJointPositions(1,:), -initialJointPositions(2,:), initialJointPositions(3,:));
     hold on
     plot3(newJointPositions(1,:), -newJointPositions(2,:), newJointPositions(3,:), 'r');
-    plot3(PGoal(1),-PGoal(2),PGoal(3), 'r*')
+    plot3(PGoal(1,goal),-PGoal(2,goal),PGoal(3,goal), 'r*')
     xlabel('x')
     ylabel('y')
     axis('equal')
@@ -171,14 +198,15 @@ roll0 = droneState.drone_roll(end);
 targetYaw = pi/2;
 
 t0 = combinedCatch.time(end);
-for steps = 1:75
+for steps = 1:100
     
     %PGoal = PGoal + 4*[(rand(1)-0.5); (rand(1)-0.5); (rand(1)-0.5)];
     
     stateGoal = iterativeJacobian(state, PGoal(:,goal), targetOrigin);
     stateGoal.theta_i(5) = pi/2 - stateGoal.theta_i(3);
     stateGoal.theta_i(6) = targetPitch;
-    stateGoal.theta_i(7) = targetYaw - stateGoal.theta_i(2);
+%     stateGoal.theta_i(7) = targetYaw - stateGoal.theta_i(2);
+    stateGoal.theta_i(7) = 0;
     
     
     state = takeStep(state, stateGoal, jointRateLimits, dt);
@@ -189,7 +217,8 @@ for steps = 1:75
         if size(PGoal,2) > goal
             goal = goal + 1;
         else
-            break
+            
+            
         end
     end
       
@@ -210,8 +239,9 @@ for steps = 1:75
     d4(steps,1) = state.d_i(4);
     theta5(steps,1) = state.theta_i(5);
     theta6(steps,1) = state.theta_i(6);
-    theta7(steps,1) = state.theta_i(7);   
-    
+    theta7(steps,1) = state.theta_i(7); 
+%     theta7(steps,1) = targetYaw - theta2(steps,1); % lets actually enforce this so the drone doesn't get out of sync
+     
     
     plot3(initialJointPositions(1,:), -initialJointPositions(2,:), initialJointPositions(3,:));
     hold on

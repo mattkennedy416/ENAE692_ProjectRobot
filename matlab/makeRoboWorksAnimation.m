@@ -13,14 +13,14 @@ isTableCol = @(t, thisCol) ismember(thisCol, t.Properties.VariableNames);
 d.ship_roll = 0;
 d.ship_pitch = 0;
 d.ship_yaw = 0;
-d.d1 = 0;
+d.d1 = 50;
 d.theta2 = 0;
 d.theta3 = pi/2;
 d.d4 = 50;
 d.theta5 = 0;
 d.theta6 = 0;
 d.theta7 = 0;
-d.catcher = -55;
+d.catcher = 0;
 d.x = 400;
 d.y = -750;
 d.z = 0;
@@ -60,7 +60,7 @@ drone_yaw = rad2deg(drone_yaw);
 
 outputTable = table(ship_roll, ship_pitch, ship_yaw, d1, theta2, theta3, d4, theta5, theta6, theta7, catcher, x, y, z, drone_roll, drone_pitch, drone_yaw);
 
-outputFilename = strcat('../', outputName, '.dat');
+outputFilename = strcat('../animations/', outputName, '.dat');
 writetable(outputTable,outputFilename,'Delimiter','\t');  
 
 

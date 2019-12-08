@@ -19,7 +19,7 @@ dz = droneState.z(end) - droneState.z(end-1);
 % vel_initial = sqrt(dx^2 + dy^2 + dz^2);
 vel_initial = [dx, dy, dz];
 
-maxDisplacement = 50; % hard limit at 55, but we may go slightly over
+maxDisplacement = 54; % hard limit at 55, but we may go slightly over
 maxHookLength = 4;
 
 % and we'll just have a linear deceleration
@@ -45,10 +45,10 @@ for iter = 2:500
     end
     if acc(3) == 0 && pitch(iter-1) < deg2rad(45)
         pitch(iter,1) = pitch(iter-1) + deg2rad(3);
+        dronePos(iter,2) = dronePos(iter,2) + 0.5;
+        dronePos(iter,3) = dronePos(iter,3) + 0.25;
     else
         pitch(iter,1) = pitch(iter-1);
-        dronePos(iter,2) = dronePos(iter,2) + 0.5;
-        dronePos(iter,3) = dronePos(iter,3) + 0.1;
     end
     
     
