@@ -147,6 +147,8 @@ for steps = 1:size(droneState,1)
     
     newJointPositions = forwardKinematics(state, pT, true);
     
+    testGoalPositions = forwardKinematics(stateGoal, pT, true);
+    
     if norm(newJointPositions(:,targetOrigin) - PGoal(:,goal)) < goalError
         if size(PGoal,2) > goal
             goal = goal + 1;
