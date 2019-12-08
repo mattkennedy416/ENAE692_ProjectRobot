@@ -268,11 +268,15 @@ droneStateReturn = table(time, x,y,z,drone_pitch, drone_roll, drone_yaw);
 
 combinedReturn = join(armStateReturn, droneStateReturn);
 
+% and add a few more steps at the end
+for iter = 1:35
+    combinedReturn = [combinedReturn; combinedReturn(end,:)];
+end
 
 
 
 combinedState = [combinedCatch; combinedReturn];
-makeRoboWorksAnimation(combinedState, 'animationTest2');
+makeRoboWorksAnimation(combinedState, 'RecoverFromStowed');
 
 
 
