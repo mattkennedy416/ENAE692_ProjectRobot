@@ -30,21 +30,27 @@ makeRoboWorksAnimation(table(time, d1), 'd1Animation');
 
 n=2;
 theta2 = transpose(linspace(jointLimits(n,1), jointLimits(n,2), length(timeBase)));
+
 timePerc = 1 - (defaults(n) - jointLimits(n,1))/(jointLimits(n,2)-jointLimits(n,1));
+timeToMin = transpose(0:round(length(timeBase)*timePerc));
+valuesToMin = transpose(linspace(defaults(n), jointLimits(n,1), length(timeToMin)));
+
 timeReturn = transpose(timeBase(end) : timeBase(end) + round(length(timeBase)*timePerc));
 returnValues = transpose(linspace(jointLimits(n,2), defaults(n), length(timeReturn)));
-time = [timeBase; timeReturn];
-theta2 = [theta2; returnValues];
+time = [timeToMin; timeToMin(end)+timeBase; timeReturn];
+theta2 = [valuesToMin; theta2; returnValues];
 makeRoboWorksAnimation(table(time, theta2), 'theta2Animation');
 
 
 n=3;
 theta3 = transpose(linspace(jointLimits(n,1), jointLimits(n,2), length(timeBase)));
 timePerc = 1 - (defaults(n) - jointLimits(n,1))/(jointLimits(n,2)-jointLimits(n,1));
+timeToMin = transpose(0:round(length(timeBase)*timePerc));
+valuesToMin = transpose(linspace(defaults(n), jointLimits(n,1), length(timeToMin)));
 timeReturn = transpose(timeBase(end) : timeBase(end) + round(length(timeBase)*timePerc));
 returnValues = transpose(linspace(jointLimits(n,2), defaults(n), length(timeReturn)));
-time = [timeBase; timeReturn];
-theta3 = [theta3; returnValues];
+time = [timeToMin; timeToMin(end)+timeBase; timeReturn];
+theta3 = [valuesToMin; theta3; returnValues];
 theta5 = pi/2 - theta3;
 makeRoboWorksAnimation(table(time, theta3, theta5), 'theta3-5Animation');
 
@@ -52,9 +58,11 @@ makeRoboWorksAnimation(table(time, theta3, theta5), 'theta3-5Animation');
 n=4;
 d4 = transpose(linspace(jointLimits(n,1), jointLimits(n,2), length(timeBase)));
 timePerc = 1 - (defaults(n) - jointLimits(n,1))/(jointLimits(n,2)-jointLimits(n,1));
+% timeToMin = transpose(0:round(length(timeBase)*timePerc));
+% valuesToMin = transpose(linspace(defaults(n), jointLimits(n,1), length(timeToMin)));
 timeReturn = transpose(timeBase(end) : timeBase(end) + round(length(timeBase)*timePerc));
 returnValues = transpose(linspace(jointLimits(n,2), defaults(n), length(timeReturn)));
-time = [timeBase; timeReturn];
+time = [timeToMin(end)+timeBase; timeReturn];
 d4 = [d4; returnValues];
 makeRoboWorksAnimation(table(time, d4), 'd4Animation');
 
@@ -62,20 +70,24 @@ makeRoboWorksAnimation(table(time, d4), 'd4Animation');
 n=6;
 theta6 = transpose(linspace(jointLimits(n,1), jointLimits(n,2), length(timeBase)));
 timePerc = 1 - (defaults(n) - jointLimits(n,1))/(jointLimits(n,2)-jointLimits(n,1));
+timeToMin = transpose(0:round(length(timeBase)*timePerc));
+valuesToMin = transpose(linspace(defaults(n), jointLimits(n,1), length(timeToMin)));
 timeReturn = transpose(timeBase(end) : timeBase(end) + round(length(timeBase)*timePerc));
 returnValues = transpose(linspace(jointLimits(n,2), defaults(n), length(timeReturn)));
-time = [timeBase; timeReturn];
-theta6 = [theta6; returnValues];
+time = [timeToMin; timeToMin(end)+timeBase; timeReturn];
+theta6 = [valuesToMin; theta6; returnValues];
 makeRoboWorksAnimation(table(time, theta6), 'theta6Animation');
 
 
 n=7;
 theta7 = transpose(linspace(jointLimits(n,1), jointLimits(n,2), length(timeBase)));
 timePerc = 1 - (defaults(n) - jointLimits(n,1))/(jointLimits(n,2)-jointLimits(n,1));
+timeToMin = transpose(0:round(length(timeBase)*timePerc));
+valuesToMin = transpose(linspace(defaults(n), jointLimits(n,1), length(timeToMin)));
 timeReturn = transpose(timeBase(end) : timeBase(end) + round(length(timeBase)*timePerc));
 returnValues = transpose(linspace(jointLimits(n,2), defaults(n), length(timeReturn)));
-time = [timeBase; timeReturn];
-theta7 = [theta7; returnValues];
+time = [timeToMin; timeToMin(end)+timeBase; timeReturn];
+theta7 = [valuesToMin; theta7; returnValues];
 makeRoboWorksAnimation(table(time, theta7), 'theta7Animation');
 
 
@@ -83,19 +95,6 @@ makeRoboWorksAnimation(table(time, theta7), 'theta7Animation');
 
 
 
-% theta6 = transpose(linspace(jointLimits(6,1), jointLimits(6,2), length(timeBase)));
-% theta7 = transpose(linspace(jointLimits(7,1), jointLimits(7,2), length(timeBase)));
-
-
-
-
-
-
-% makeRoboWorksAnimation(table(timeBase, theta3, theta5), 'theta3-5Animation');
-% 
-% makeRoboWorksAnimation(table(timeBase, d4), 'd4Animation');
-% makeRoboWorksAnimation(table(timeBase, theta6), 'theta6Animation');
-% makeRoboWorksAnimation(table(timeBase, theta7), 'theta7Animation');
 
 
 
