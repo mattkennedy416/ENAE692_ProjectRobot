@@ -174,6 +174,15 @@ armState = table(time, d1, theta2, theta3, d4, theta5, theta6, theta7, catcher);
 combinedCatch = join(armState, droneState);
 
 
+% lets add a few more steps at the beginning showing it in the stowed state
+% just duplicate the first data point
+for iter = 1:35
+    combinedCatch = [combinedCatch(1,:); combinedCatch];
+end
+
+
+
+
 %% RETURN IT TO DECK!
 deckTarget = [0; 50; 25]; % this can be P5
 PGoal1 = [25; 50; 65];
@@ -217,8 +226,7 @@ for steps = 1:100
         if size(PGoal,2) > goal
             goal = goal + 1;
         else
-            
-            
+            break            
         end
     end
       
